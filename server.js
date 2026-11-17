@@ -201,9 +201,9 @@ class Room {
       for (const c of q.cells) {
         const d = Math.hypot(c.x - me.x, c.y - me.y);
         if (d > range) continue;
-        if (c.mass > me.mass * 1.1 && d < radius(c.mass) + 450) {
+        if (c.mass > me.mass * 1.05 && d < radius(c.mass) + 450) {
           fleeX += (me.x - c.x) / (d || 1); fleeY += (me.y - c.y) / (d || 1); threat = true;
-        } else if (!foodOnly && me.mass > c.mass * 1.15) {
+        } else if (!foodOnly && me.mass > c.mass * 1.1) {
           const s = (c.mass / (d + 50)) * 3;
           if (s > bestScore) { bestScore = s; best = c; }
         }
@@ -389,11 +389,11 @@ class Room {
       for (let j = i + 1; j < allCells.length; j++) {
         const small = allCells[j];
         if (small.mass <= 0 || small.owner.team === team) continue;
-        if (big.mass < small.mass * 1.1) break; // la lista está ordenada: el resto es más chico
-        const rs = radius(small.mass);
-        const dx = small.x - big.x; if (dx > rb || dx < -rb) continue;
-        const dy = small.y - big.y; if (dy > rb || dy < -rb) continue;
-        if (Math.hypot(dx, dy) < rb - rs * 0.05) { big.mass += small.mass; small.mass = 0; }
+        if (big.mass < small.mass * 1.05) break; // la lista está ordenada: el resto es más chico
+        const reach = rb + radius(small.mass) * 0.2; // basta con pasar por encima (compensa el lag)
+        const dx = small.x - big.x; if (dx > reach || dx < -reach) continue;
+        const dy = small.y - big.y; if (dy > reach || dy < -reach) continue;
+        if (Math.hypot(dx, dy) < reach) { big.mass += small.mass; small.mass = 0; }
       }
     }
 
