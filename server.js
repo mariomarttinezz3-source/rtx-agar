@@ -181,7 +181,7 @@ class Room {
       const ang = (i / pieces) * Math.PI * 2 + rand(-0.2, 0.2);
       cell.mass -= pieceMass;
       const n = this.makeCell(p, cell.x, cell.y, pieceMass);
-      n.vx = Math.cos(ang) * 20; n.vy = Math.sin(ang) * 20;
+      n.vx = Math.cos(ang) * 34; n.vy = Math.sin(ang) * 34;
       n.mergeAt = now + this.mergeDelay(pieceMass);
       p.cells.push(n);
     }
