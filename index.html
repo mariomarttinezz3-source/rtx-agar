@@ -350,7 +350,7 @@
   function frame(now) {
     const dt = Math.min(50, now - lastT); lastT = now;
     fpsN++; fpsT += dt; if (fpsT >= 1000) { fps = fpsN; fpsN = 0; fpsT = 0; }
-    const k = 1 - Math.pow(0.75, dt / 16.7);
+    const k = 1 - Math.pow(0.6, dt / 16.7);
     cam.x += (target.x - cam.x) * k; cam.y += (target.y - cam.y) * k;
     cam.z += (Math.max(W, H) / (2200 * target.f) - cam.z) * k * 0.5;
     for (const [id, e] of ents) {
@@ -399,9 +399,9 @@
         ctx.font = '700 ' + fs + 'px system-ui, sans-serif';
         ctx.lineWidth = Math.max(2, fs * 0.13); ctx.strokeStyle = '#000'; ctx.fillStyle = '#fff';
         if (pi.name) { ctx.strokeText(pi.name, e.x, e.y); ctx.fillText(pi.name, e.x, e.y); }
-        if (e.type === 1 || e.type === 4) {
+        if (e.r > 25) { // masa visible en todas las células
           const ms = Math.floor((e.tr / 10) ** 2);
-          ctx.font = '700 ' + fs * 0.5 + 'px system-ui, sans-serif';
+          ctx.font = '700 ' + fs * 0.62 + 'px system-ui, sans-serif';
           ctx.strokeText(ms, e.x, e.y + fs * 0.78); ctx.fillText(ms, e.x, e.y + fs * 0.78);
         }
       }
