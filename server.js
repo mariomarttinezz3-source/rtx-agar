@@ -393,7 +393,7 @@ class Room {
         const rs = radius(small.mass);
         const dx = small.x - big.x; if (dx > rb || dx < -rb) continue;
         const dy = small.y - big.y; if (dy > rb || dy < -rb) continue;
-        if (Math.hypot(dx, dy) < rb - rs * 0.35) { big.mass += small.mass; small.mass = 0; }
+        if (Math.hypot(dx, dy) < rb - rs * 0.05) { big.mass += small.mass; small.mass = 0; }
       }
     }
 
