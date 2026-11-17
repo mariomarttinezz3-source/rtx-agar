@@ -191,7 +191,18 @@
       const [id, x, y, r, owner, type] = a;
       seen.add(id);
       let e = ents.get(id);
-      if (!e) { e = { id, x, y, r: type === 3 ? r : r * 0.6 }; ents.set(id, e); }
+      if (!e) {
+        let sx = x, sy = y; // célula nueva propia: sale desde la célula de origen (división suave)
+        if (type === 1 || type === 4) {
+          let best = Infinity;
+          for (const o of ents.values()) {
+            if (o.dead || o.owner !== owner) continue;
+            const d = (o.x - x) ** 2 + (o.y - y) ** 2;
+            if (d < best && d < (o.r * 3) ** 2) { best = d; sx = o.x; sy = o.y; }
+          }
+        }
+        e = { id, x: sx, y: sy, r: type === 3 ? r : r * 0.6 }; ents.set(id, e);
+      }
       e.tx = x; e.ty = y; e.tr = r; e.owner = owner; e.type = type; e.dead = false;
     }
     for (const e of ents.values()) if (!seen.has(e.id) && !e.dead) { e.dead = true; e.deadT = 0; }
