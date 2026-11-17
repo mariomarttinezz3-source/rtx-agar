@@ -392,7 +392,7 @@ class Room {
         const small = allCells[j];
         if (small.mass <= 0 || small.owner.team === team) continue;
         if (big.mass < small.mass * 1.05) break; // la lista está ordenada: el resto es más chico
-        const reach = rb + radius(small.mass) * 0.2; // basta con pasar por encima (compensa el lag)
+        const reach = rb - radius(small.mass) * 0.2; // hay que estar realmente encima (tapar gran parte)
         const dx = small.x - big.x; if (dx > reach || dx < -reach) continue;
         const dy = small.y - big.y; if (dy > reach || dy < -reach) continue;
         if (Math.hypot(dx, dy) < reach) { big.mass += small.mass; small.mass = 0; }
