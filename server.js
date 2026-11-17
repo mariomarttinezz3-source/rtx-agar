@@ -146,7 +146,7 @@ class Room {
       const half = c.mass / 2;
       c.mass = half;
       const n = this.makeCell(p, c.x + dx * radius(half) * 0.3, c.y + dy * radius(half) * 0.3, half);
-      const boost = 30 + Math.min(radius(half) * 0.04, 14);
+      const boost = 42 + Math.min(radius(half) * 0.04, 14);
       n.vx = dx * boost; n.vy = dy * boost;
       const mt = now + this.mergeDelay(half);
       c.mergeAt = Math.max(c.mergeAt, mt); n.mergeAt = mt;
@@ -183,7 +183,7 @@ class Room {
       const ang = (i / pieces) * Math.PI * 2 + rand(-0.2, 0.2);
       cell.mass -= pieceMass;
       const n = this.makeCell(p, cell.x, cell.y, pieceMass);
-      n.vx = Math.cos(ang) * 34; n.vy = Math.sin(ang) * 34;
+      n.vx = Math.cos(ang) * 41; n.vy = Math.sin(ang) * 41;
       n.mergeAt = now + this.mergeDelay(pieceMass);
       p.cells.push(n);
     }
@@ -264,7 +264,7 @@ class Room {
           c.x += (dx / d) * sp; c.y += (dy / d) * sp;
         }
         c.x += c.vx; c.y += c.vy;
-        c.vx *= 0.91; c.vy *= 0.91;
+        c.vx *= 0.89; c.vy *= 0.89;
         if (Math.abs(c.vx) < 0.05) c.vx = 0;
         if (Math.abs(c.vy) < 0.05) c.vy = 0;
         c.x = clamp(c.x, r * 0.4, W - r * 0.4);
