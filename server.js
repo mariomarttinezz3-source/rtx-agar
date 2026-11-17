@@ -19,7 +19,7 @@ const MAX_PLAYERS_PER_ROOM = 60;
 // Cada modo es una sala independiente con sus propias reglas
 const MODES = {
   ffa: { label: 'FFA Clásico', worldSize: 7000, startMass: 20, maxCells: 16, mergeMs: 15000, mergeMassMul: 15,
-    speed: 1, viruses: 25, food: 1000, foodMass: 1, bots: 10, decay: 0.00025, minions: 0, splitMin: 36 },
+    speed: 1.2, viruses: 25, food: 1000, foodMass: 3, bots: 10, decay: 0.00025, minions: 0, splitMin: 36 },
   instant: { label: 'Instant', worldSize: 8000, startMass: 500, maxCells: 32, mergeMs: 700, mergeMassMul: 0,
     speed: 1.35, viruses: 35, food: 1400, foodMass: 2, bots: 14, decay: 0.0004, minions: 0, splitMin: 36 },
   crazy: { label: 'Crazy', worldSize: 9000, startMass: 2500, maxCells: 64, mergeMs: 1500, mergeMassMul: 0,
