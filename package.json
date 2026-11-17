@@ -1,0 +1,9 @@
+{
+  "name": "agario-server",
+  "version": "1.0.0",
+  "description": "Servidor privado estilo Agar.io, sin dependencias",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=16" },
+  "license": "MIT"
+}
