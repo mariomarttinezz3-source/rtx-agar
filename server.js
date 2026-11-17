@@ -72,6 +72,10 @@ class Player {
     this.botTimer = 0;
     this.party = '';
     this.stats = null;
+    this.spectate = false; // espectando al líder
+    this.rank = 0;
+    this.lastHit = null; // quién lo comió por última vez
+    this.lastEmote = 0;
   }
   get team() { return this.master ? this.master.id : this.id; }
   totalMass() { let m = 0; for (const c of this.cells) m += c.mass; return m; }
@@ -87,6 +91,7 @@ class Player {
     this.cells = [this.room.makeCell(this, pos.x, pos.y, mass)];
     this.tx = pos.x; this.ty = pos.y;
     this.alive = true;
+    this.lastHit = null;
     this.stats = { food: 0, start: Date.now(), maxMass: mass, bestRank: 99 };
   }
   info() { return [this.id, this.name, this.color, this.skin]; }
@@ -395,7 +400,7 @@ class Room {
         const reach = rb - radius(small.mass) * 0.2; // hay que estar realmente encima (tapar gran parte)
         const dx = small.x - big.x; if (dx > reach || dx < -reach) continue;
         const dy = small.y - big.y; if (dy > reach || dy < -reach) continue;
-        if (Math.hypot(dx, dy) < reach) { big.mass += small.mass; small.mass = 0; }
+        if (Math.hypot(dx, dy) < reach) { big.mass += small.mass; small.mass = 0; small.owner.lastHit = big.owner; }
       }
     }
 
@@ -422,10 +427,12 @@ class Room {
       if (p.stats && m > p.stats.maxMass) p.stats.maxMass = m;
       if (p.cells.length === 0) {
         p.alive = false; p.deadAt = now;
+        const killer = p.lastHit ? (p.lastHit.master || p.lastHit) : null;
+        if (killer && killer.team !== p.team && killer.conn && !p.master) killer.conn.send({ t: 'kill', n: p.name });
         if (p.conn) {
           const s = p.stats;
           p.conn.send({ t: 'dead', food: s.food, max: Math.floor(s.maxMass), time: Math.floor((now - s.start) / 1000),
-            rank: s.bestRank < 99 ? s.bestRank : null });
+            rank: s.bestRank < 99 ? s.bestRank : null, by: killer && killer !== p ? killer.name : null });
         }
       }
     }
@@ -454,6 +461,14 @@ class Room {
         for (const c of p.cells) { sx += c.x * c.mass; sy += c.y * c.mass; m += c.mass; }
         p.viewX = sx / m; p.viewY = sy / m;
         p.viewF = 1 + Math.sqrt(m) / 45 + Math.min(p.cells.length, 16) * 0.02;
+      } else if (p.spectate) { // modo espectador: sigue al jugador más grande
+        let best = null, bm = 0;
+        for (const q of this.players.values()) {
+          if (!q.alive || q.master) continue;
+          const qm = q.totalMass();
+          if (qm > bm) { bm = qm; best = q; }
+        }
+        if (best) { p.viewX = best.viewX; p.viewY = best.viewY; p.viewF = best.viewF * 1.15; }
       }
       const hw = 1100 * p.viewF;
       const x0 = p.viewX - hw, x1 = p.viewX + hw, y0 = p.viewY - hw, y1 = p.viewY + hw;
@@ -475,7 +490,7 @@ class Room {
         out.push([e.id, Math.round(e.x), Math.round(e.y), Math.round(radius(e.mass) * 0.6), e.owner.id, 3]);
       }
       const msg = { t: 's', x: Math.round(p.viewX), y: Math.round(p.viewY), f: +p.viewF.toFixed(3),
-        m: Math.floor(p.alive ? p.totalMass() : 0), c: out };
+        m: Math.floor(p.alive ? p.totalMass() : 0), rk: p.alive ? p.rank : 0, c: out };
       if (sendFood) {
         const fd = [];
         for (const f of this.food) {
@@ -490,7 +505,7 @@ class Room {
     if (this.tickCount % 12 === 0) {
       const ranked = [...this.players.values()].filter((p) => p.alive && !p.master)
         .map((p) => ({ p, m: p.totalMass() })).sort((a, b) => b.m - a.m);
-      ranked.forEach((r, i) => { if (r.p.stats && i + 1 < r.p.stats.bestRank) r.p.stats.bestRank = i + 1; });
+      ranked.forEach((r, i) => { r.p.rank = i + 1; if (r.p.stats && i + 1 < r.p.stats.bestRank) r.p.stats.bestRank = i + 1; });
       const lb = ranked.slice(0, 10).map((r) => [r.p.id, r.p.name, Math.floor(r.m)]);
       this.broadcast({ t: 'lb', lb, on: this.humans() });
     }
@@ -519,6 +534,7 @@ class Room {
         const skin = cleanSkin(msg.skin);
         p.name = name; p.skin = skin;
         p.wantsPlay = true;
+        p.spectate = false;
         if (!p.alive) p.spawn();
         // minions en modo bots
         if (this.mode.minions && p.minions.length === 0) {
@@ -560,6 +576,15 @@ class Room {
       }
       case 'partyLeave': p.party = ''; conn.send({ t: 'party', code: '', list: [], total: 0 }); break;
       case 'ping': conn.send({ t: 'pong', ts: msg.ts }); break;
+      case 'spectate': if (!p.alive) p.spectate = true; break;
+      case 'emote': {
+        const e = Number(msg.e) | 0;
+        const now = Date.now();
+        if (!p.alive || e < 0 || e > 7 || now - p.lastEmote < 1200) return;
+        p.lastEmote = now;
+        this.broadcast({ t: 'emote', id: p.id, e });
+        break;
+      }
     }
   }
 
