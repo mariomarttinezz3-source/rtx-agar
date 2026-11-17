@@ -9,17 +9,21 @@
   html, body { width: 100%; height: 100%; overflow: hidden; background: #111; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; touch-action: none; user-select: none; -webkit-user-select: none; color: #fff; }
   canvas { display: block; }
   .panel { background: rgba(0,0,0,.5); border-radius: 10px; padding: 8px 11px; font-size: 13px; pointer-events: none; }
+  body.light .panel { background: rgba(0,0,0,.35); }
   #menu { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(5,8,16,.6); z-index: 10; overflow-y: auto; padding: 14px; }
-  #menu .box { background: #1b1f2a; padding: 22px; border-radius: 16px; width: min(380px, 94vw); box-shadow: 0 10px 40px rgba(0,0,0,.5); margin: auto; }
-  #menu h1 { font-size: 26px; text-align: center; letter-spacing: 1px; }
+  #menu .box { background: #1b1f2a; padding: 22px; border-radius: 16px; width: min(390px, 94vw); box-shadow: 0 10px 40px rgba(0,0,0,.5); margin: auto; position: relative; }
+  #menu h1 { font-size: 28px; text-align: center; letter-spacing: 2px; background: linear-gradient(90deg, #3ae374, #18dcff); -webkit-background-clip: text; background-clip: text; color: transparent; }
   #menu .sub { color: #8a93a8; font-size: 13px; text-align: center; margin: 2px 0 14px; }
+  #gear { position: absolute; top: 14px; right: 14px; background: #2a3040; border: 0; color: #fff; width: 36px; height: 36px; border-radius: 10px; font-size: 18px; cursor: pointer; }
   #modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
   #modes button { background: #2a3040; color: #fff; border: 2px solid transparent; border-radius: 10px; padding: 8px 6px; font-size: 14px; font-weight: 700; cursor: pointer; }
   #modes button small { display: block; font-weight: 400; color: #8a93a8; font-size: 11px; }
   #modes button.sel { border-color: #3ae374; background: #23392d; }
-  #menu input { width: 100%; font-size: 16px; padding: 10px 12px; border: 2px solid #2f3647; background: #12151d; color: #fff; border-radius: 10px; outline: none; margin-bottom: 8px; }
+  #menu input[type=text], #menu input:not([type]) { width: 100%; font-size: 16px; padding: 10px 12px; border: 2px solid #2f3647; background: #12151d; color: #fff; border-radius: 10px; outline: none; margin-bottom: 8px; }
   #menu input:focus { border-color: #3ae374; }
-  .btn { width: 100%; font-size: 18px; font-weight: 800; padding: 12px; border: 0; border-radius: 10px; background: #3ae374; color: #08130c; cursor: pointer; }
+  .btns { display: flex; gap: 6px; }
+  .btn { flex: 1; font-size: 18px; font-weight: 800; padding: 12px; border: 0; border-radius: 10px; background: #3ae374; color: #08130c; cursor: pointer; }
+  .btnS { flex: 0 0 auto; font-size: 14px; font-weight: 700; padding: 12px 14px; border: 0; border-radius: 10px; background: #2a3040; color: #fff; cursor: pointer; }
   .btn2 { font-size: 13px; font-weight: 700; padding: 9px 10px; border: 0; border-radius: 8px; background: #2a3040; color: #fff; cursor: pointer; white-space: nowrap; }
   .row { display: flex; gap: 6px; margin-top: 10px; }
   .row input { margin-bottom: 0 !important; font-size: 14px !important; padding: 8px 10px !important; }
@@ -28,22 +32,31 @@
   #stats h3 { color: #ff5c5c; font-size: 16px; margin-bottom: 6px; text-align: center; }
   #stats .g { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
   #stats b { color: #ffd32a; }
+  #settings { display: none; background: #12151d; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
+  #settings label { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
+  #settings input { width: 18px; height: 18px; accent-color: #3ae374; }
   .keys { margin-top: 12px; font-size: 11.5px; color: #8a93a8; line-height: 1.6; }
   .keys b { color: #cfd6e6; }
-  #lb { position: fixed; top: 10px; right: 10px; min-width: 160px; }
+  #lb { position: fixed; top: 10px; right: 10px; min-width: 165px; }
   #lb h3 { font-size: 14px; text-align: center; margin-bottom: 5px; }
   #lb .me { color: #ffd32a; font-weight: 700; }
+  #lb .sep { border-top: 1px solid rgba(255,255,255,.2); margin-top: 4px; padding-top: 4px; }
   #hud { position: fixed; top: 10px; left: 10px; line-height: 1.5; }
-  #partyHud { position: fixed; top: 92px; left: 10px; display: none; max-width: 180px; }
+  #sScore { font-size: 16px; font-weight: 800; }
+  #partyHud { position: fixed; top: 100px; left: 10px; display: none; max-width: 180px; }
   #mini { position: fixed; right: 10px; bottom: 10px; width: 160px; height: 160px; background: rgba(0,0,0,.45); border-radius: 8px; pointer-events: none; }
   #chat { position: fixed; left: 10px; bottom: 50px; width: min(330px, 62vw); pointer-events: none; font-size: 13px; }
   #chat .line { background: rgba(0,0,0,.45); padding: 3px 7px; border-radius: 6px; margin-top: 3px; word-wrap: break-word; }
   #chatIn { position: fixed; left: 10px; bottom: 12px; width: min(330px, 70vw); font-size: 15px; padding: 8px; border-radius: 8px; border: 0; outline: none; display: none; z-index: 5; }
-  #toast { position: fixed; top: 40%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.7); padding: 8px 14px; border-radius: 10px; font-weight: 700; display: none; z-index: 6; }
+  #toast { position: fixed; top: 22%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.7); padding: 8px 16px; border-radius: 10px; font-weight: 800; display: none; z-index: 6; font-size: 16px; }
+  #specBar { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; z-index: 6; }
+  #specBar span { background: rgba(0,0,0,.6); padding: 10px 14px; border-radius: 10px; font-weight: 700; }
+  #emoteBar { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); display: none; gap: 4px; background: rgba(0,0,0,.55); padding: 6px; border-radius: 12px; z-index: 7; }
+  #emoteBar button { font-size: 26px; background: none; border: 0; cursor: pointer; padding: 2px 4px; }
   .tb { position: fixed; border-radius: 50%; background: rgba(0,0,0,.4); color: #fff; font-weight: 800; font-size: 11px; display: none; align-items: center; justify-content: center; z-index: 4; border: 2px solid rgba(255,255,255,.35); }
   body.touch .tb { display: flex; }
-  body.touch #mini { top: 92px; left: 10px; right: auto; bottom: auto; width: 110px; height: 110px; }
-  body.touch #partyHud { top: 210px; }
+  body.touch #mini { top: 100px; left: 10px; right: auto; bottom: auto; width: 110px; height: 110px; }
+  body.touch #partyHud { top: 218px; }
   #bSplit { right: 14px; bottom: 20px; width: 72px; height: 72px; }
   #bEject { right: 94px; bottom: 20px; width: 62px; height: 62px; }
   #bDouble { right: 22px; bottom: 102px; width: 56px; height: 56px; }
@@ -51,12 +64,15 @@
   #bMinion { right: 150px; bottom: 26px; width: 52px; height: 52px; display: none !important; }
   body.touch.hasMinions #bMinion { display: flex !important; }
   #bChat { right: 22px; bottom: 170px; width: 44px; height: 44px; font-size: 18px; }
+  #bEmote { right: 74px; bottom: 156px; width: 44px; height: 44px; font-size: 20px; }
+  #bEmoteD { position: fixed; right: 180px; bottom: 12px; font-size: 22px; background: rgba(0,0,0,.45); border: 0; border-radius: 10px; width: 42px; height: 42px; cursor: pointer; z-index: 4; }
+  body.touch #bEmoteD { display: none; }
   #conn { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); font-weight: 700; font-size: 16px; color: #ff6b6b; z-index: 20; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="hud" class="panel"><div id="sScore">Masa: 0</div><div id="sPerf"></div></div>
+<div id="hud" class="panel"><div id="sScore">Masa: 0</div><div id="sRank"></div><div id="sPerf"></div></div>
 <div id="partyHud" class="panel"></div>
 <div id="lb" class="panel"><h3 id="lbTitle">Top 10</h3><div id="lbList"></div></div>
 <canvas id="mini"></canvas>
@@ -64,23 +80,29 @@
 <input id="chatIn" maxlength="120" placeholder="Escribe y Enter…">
 <div id="toast"></div>
 <div id="conn"></div>
+<div id="specBar"><span>👁 Espectando al líder</span><button class="btnS" id="specBack">Menú</button></div>
+<div id="emoteBar"></div>
+<button id="bEmoteD" title="Emotes (teclas 1-8)">😀</button>
 <div class="tb" id="bEject">W</div>
 <div class="tb" id="bSplit">DIVIDIR</div>
 <div class="tb" id="bDouble">x2</div>
 <div class="tb" id="bMax">x16</div>
 <div class="tb" id="bMinion">BOTS</div>
 <div class="tb" id="bChat">💬</div>
+<div class="tb" id="bEmote">😀</div>
 
 <div id="menu"><div class="box">
+  <button id="gear" title="Configuración">⚙</button>
   <h1 id="title">AGAR</h1>
   <div class="sub" id="sub">Servidor privado</div>
-  <div id="stats"><h3>¡Te comieron!</h3><div class="g">
+  <div id="settings"></div>
+  <div id="stats"><h3 id="stTitle">¡Te comieron!</h3><div class="g">
     <div>Comida: <b id="stFood">0</b></div><div>Masa máx.: <b id="stMax">0</b></div>
     <div>Tiempo vivo: <b id="stTime">0</b></div><div>Mejor puesto: <b id="stRank">-</b></div></div></div>
   <div id="modes"></div>
   <input id="nick" maxlength="16" placeholder="Tu nombre" autocomplete="off">
   <input id="skin" maxlength="300" placeholder="Skin: link de imagen (opcional, https://…)" autocomplete="off">
-  <button class="btn" id="play">JUGAR</button>
+  <div class="btns"><button class="btn" id="play">JUGAR</button><button class="btnS" id="spec">👁 Espectar</button></div>
   <div class="row">
     <button class="btn2" id="pCreate">Crear party</button>
     <input id="pCode" maxlength="8" placeholder="Código" autocomplete="off">
@@ -88,9 +110,9 @@
   </div>
   <div id="partyInfo"></div>
   <div class="keys">
-    <b>Mouse</b> mover · <b>Espacio</b> dividir · <b>D</b> doble · <b>T</b> triple · <b>Z</b> x16<br>
-    <b>W</b> expulsar · <b>E</b> expulsar rápido · <b>Q</b> minions (modo Bots) · <b>Enter</b> chat · <b>Esc</b> menú<br>
-    Celular: toca/arrastra para moverte y usa los botones
+    <b>Mouse</b> mover · <b>Rueda</b> zoom · <b>Espacio</b> dividir · <b>D</b> doble · <b>T</b> triple · <b>Z</b> máximo<br>
+    <b>W</b> expulsar · <b>E</b> expulsar rápido · <b>1-8</b> emotes · <b>Q</b> minions · <b>Enter</b> chat · <b>Esc</b> menú<br>
+    Celular: arrastra para moverte, dos dedos para zoom, y usa los botones
   </div>
 </div></div>
 
@@ -109,15 +131,45 @@
   if (isTouch) document.body.classList.add('touch');
   addEventListener('resize', resize); resize();
 
+  // ---------- configuración (se guarda en el navegador) ----------
+  const CFG_DEF = { mass: true, names: true, skins: true, grid: true, minimap: true, light: false };
+  const CFG_LABELS = { mass: 'Mostrar masa', names: 'Mostrar nombres', skins: 'Mostrar skins', grid: 'Cuadrícula', minimap: 'Minimapa', light: 'Modo claro' };
+  let cfg = { ...CFG_DEF };
+  try { Object.assign(cfg, JSON.parse(localStorage.getItem('cfg') || '{}')); } catch (e) {}
+  function applyCfg() {
+    document.body.classList.toggle('light', cfg.light);
+    mini.style.display = cfg.minimap ? '' : 'none';
+    try { localStorage.setItem('cfg', JSON.stringify(cfg)); } catch (e) {}
+  }
+  for (const k of Object.keys(CFG_DEF)) {
+    const l = document.createElement('label');
+    const i = document.createElement('input'); i.type = 'checkbox'; i.checked = cfg[k];
+    i.onchange = () => { cfg[k] = i.checked; applyCfg(); };
+    l.appendChild(i); l.appendChild(document.createTextNode(CFG_LABELS[k]));
+    $('settings').appendChild(l);
+  }
+  $('gear').onclick = () => { const s = $('settings'); s.style.display = s.style.display === 'block' ? 'none' : 'block'; };
+  applyCfg();
+
+  const EMOTES = ['😂', '😡', '😎', '👋', '💀', '❤️', '🤡', '🔥'];
+  for (let i = 0; i < EMOTES.length; i++) {
+    const b = document.createElement('button'); b.textContent = EMOTES[i];
+    const go = (e) => { e.preventDefault(); sendEmote(i); $('emoteBar').style.display = 'none'; };
+    b.addEventListener('click', go); b.addEventListener('touchstart', go, { passive: false });
+    $('emoteBar').appendChild(b);
+  }
+
   const params = new URLSearchParams(location.search);
   let mode = params.get('mode') || '';
   let pendingParty = (params.get('party') || '').toUpperCase();
   let ws, myId = 0, worldW = 7000, colors = [], maxSplit = 4, partyCode = '', partyList = [];
   const pinfo = new Map(); // id -> {name,color,skin}
   const ents = new Map();
+  const emotes = new Map(); // id jugador -> {e, t}
   let foodArr = [];
   let cam = { x: 3500, y: 3500, z: 0.5 }, target = { x: 3500, y: 3500, f: 1 };
-  let score = 0, playing = false, mouseX = W / 2, mouseY = H / 2, ping = 0, fps = 0;
+  let zoomMul = 1;
+  let score = 0, myRank = 0, playing = false, spectating = false, mouseX = W / 2, mouseY = H / 2, ping = 0, fps = 0;
 
   try { $('nick').value = localStorage.getItem('nick') || ''; $('skin').value = localStorage.getItem('skin') || ''; } catch (e) {}
 
@@ -130,7 +182,6 @@
       $('modes').innerHTML = '';
       for (const m of d.modes) {
         const b = document.createElement('button');
-        b.innerHTML = '';
         b.appendChild(document.createTextNode(m.label));
         const s = document.createElement('small'); s.textContent = m.players + ' jugando'; b.appendChild(s);
         if (m.key === mode) b.className = 'sel';
@@ -143,14 +194,14 @@
   // ---------- conexión ----------
   function connect() {
     if (ws) { ws.onclose = null; ws.close(); }
-    ents.clear(); foodArr = []; playing = false;
+    ents.clear(); foodArr = []; playing = false; spectating = false; $('specBar').style.display = 'none';
     $('conn').textContent = 'Conectando…';
     const proto = location.protocol === 'https:' ? 'wss://' : 'ws://';
     const sock = new WebSocket(proto + location.host + '/?mode=' + encodeURIComponent(mode));
     ws = sock;
     sock.onopen = () => {
       $('conn').textContent = '';
-      if (pendingParty) { send({ t: 'partyJoin', code: pendingParty }); }
+      if (pendingParty) send({ t: 'partyJoin', code: pendingParty });
       else if (partyCode) send({ t: 'partyJoin', code: partyCode });
     };
     sock.onclose = () => { if (ws !== sock) return; $('conn').textContent = 'Desconectado — reintentando…'; playing = false; showMenu(); setTimeout(connect, 2000); };
@@ -173,10 +224,13 @@
       case 'dead':
         playing = false;
         $('stats').style.display = 'block';
+        $('stTitle').textContent = m.by ? '¡Te comió ' + m.by + '!' : '¡Te comieron!';
         $('stFood').textContent = m.food; $('stMax').textContent = m.max;
         $('stTime').textContent = m.time >= 60 ? Math.floor(m.time / 60) + 'm ' + (m.time % 60) + 's' : m.time + 's';
         $('stRank').textContent = m.rank ? '#' + m.rank : '-';
         showMenu(); break;
+      case 'kill': toast('🍴 Te comiste a ' + m.n); break;
+      case 'emote': emotes.set(m.id, { e: EMOTES[m.e] || '', t: performance.now() }); break;
       case 'chat': addChat(m); break;
       case 'party': onParty(m); break;
       case 'minion': toast(m.collect ? 'Minions: recolectando comida' : 'Minions: te siguen'); break;
@@ -185,7 +239,7 @@
   }
 
   function onState(m) {
-    target.x = m.x; target.y = m.y; target.f = m.f; score = m.m;
+    target.x = m.x; target.y = m.y; target.f = m.f; score = m.m; myRank = m.rk || 0;
     const seen = new Set();
     for (const a of m.c) {
       const [id, x, y, r, owner, type] = a;
@@ -211,13 +265,18 @@
 
   function onLb(m) {
     $('lbList').innerHTML = '';
+    let inTop = false;
     m.lb.forEach(([id, n, mass], i) => {
       const d = document.createElement('div');
       d.textContent = (i + 1) + '. ' + n + ' — ' + mass;
-      if (id === myId) d.className = 'me';
+      if (id === myId) { d.className = 'me'; inTop = true; }
       $('lbList').appendChild(d);
     });
-    $('online').textContent = m.on + (m.on === 1 ? ' jugador' : ' jugadores');
+    if (!inTop && playing && myRank > 0) {
+      const d = document.createElement('div'); d.className = 'me sep';
+      d.textContent = myRank + '. ' + (pinfo.get(myId)?.name || 'Tú') + ' — ' + score;
+      $('lbList').appendChild(d);
+    }
   }
 
   function onParty(m) {
@@ -252,27 +311,41 @@
     setTimeout(() => d.remove(), 15000);
   }
   let toastT;
-  function toast(t) { $('toast').textContent = t; $('toast').style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => $('toast').style.display = 'none', 1600); }
+  function toast(t) { $('toast').textContent = t; $('toast').style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => $('toast').style.display = 'none', 1800); }
 
   // ---------- menú ----------
-  const onlineEl = document.createElement('span'); onlineEl.id = 'online';
-  $('sub').after(onlineEl); onlineEl.style.display = 'none';
-  function showMenu() { $('menu').style.display = 'flex'; loadModes(); }
+  function showMenu() { $('menu').style.display = 'flex'; $('specBar').style.display = 'none'; spectating = false; loadModes(); }
   function play() {
     const name = $('nick').value.trim(), skin = $('skin').value.trim();
     try { localStorage.setItem('nick', name); localStorage.setItem('skin', skin); } catch (e) {}
     send({ t: 'join', name, skin });
-    playing = true; $('menu').style.display = 'none'; $('stats').style.display = 'none';
+    playing = true; spectating = false; zoomMul = 1;
+    $('menu').style.display = 'none'; $('stats').style.display = 'none'; $('specBar').style.display = 'none';
     document.activeElement && document.activeElement.blur();
   }
+  function spectate() {
+    send({ t: 'spectate' });
+    spectating = true; playing = false;
+    $('menu').style.display = 'none'; $('specBar').style.display = 'flex';
+  }
   $('play').onclick = play;
+  $('spec').onclick = spectate;
+  $('specBack').onclick = showMenu;
   $('nick').addEventListener('keydown', (e) => { if (e.key === 'Enter') play(); });
   $('pCreate').onclick = () => send({ t: 'partyCreate' });
   $('pJoin').onclick = () => { const c = $('pCode').value.trim(); if (c) send({ t: 'partyJoin', code: c }); };
 
   // ---------- controles ----------
   const split = (n) => send({ t: 'split', n });
+  let lastEmote = 0;
+  function sendEmote(i) { const now = performance.now(); if (!playing || now - lastEmote < 1200) return; lastEmote = now; send({ t: 'emote', e: i }); }
+  function toggleEmoteBar() { const b = $('emoteBar'); b.style.display = b.style.display === 'flex' ? 'none' : 'flex'; }
+  $('bEmoteD').onclick = toggleEmoteBar;
   addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+  addEventListener('wheel', (e) => {
+    if ($('menu').style.display !== 'none') return;
+    zoomMul = Math.min(2.5, Math.max(0.35, zoomMul * (e.deltaY > 0 ? 0.9 : 1.11)));
+  }, { passive: true });
   let ejectHold = null, ejectKey = '';
   function startEject(fast, key) { if (ejectHold) return; ejectKey = key; send({ t: 'eject' }); ejectHold = setInterval(() => send({ t: 'eject' }), fast ? 40 : 110); }
   function stopEject() { clearInterval(ejectHold); ejectHold = null; }
@@ -286,6 +359,7 @@
     if (ae && ae.tagName === 'INPUT') return;
     if (e.key === 'Escape') { if ($('menu').style.display === 'none') showMenu(); else if (playing) $('menu').style.display = 'none'; return; }
     if (!playing || e.repeat && e.code !== 'KeyW' && e.code !== 'KeyE') { if (e.code === 'Space') e.preventDefault(); return; }
+    if (/^Digit[1-8]$/.test(e.code)) { sendEmote(Number(e.code.slice(5)) - 1); return; }
     switch (e.code) {
       case 'Space': e.preventDefault(); split(1); break;
       case 'KeyD': split(2); break;
@@ -300,10 +374,23 @@
   addEventListener('keyup', (e) => { if (e.code === ejectKey) stopEject(); });
   addEventListener('blur', stopEject);
 
-  let moveTouch = null;
-  cv.addEventListener('touchstart', (e) => { e.preventDefault(); for (const t of e.changedTouches) if (moveTouch === null) { moveTouch = t.identifier; mouseX = t.clientX; mouseY = t.clientY; } }, { passive: false });
-  cv.addEventListener('touchmove', (e) => { e.preventDefault(); for (const t of e.changedTouches) if (t.identifier === moveTouch) { mouseX = t.clientX; mouseY = t.clientY; } }, { passive: false });
-  cv.addEventListener('touchend', (e) => { for (const t of e.changedTouches) if (t.identifier === moveTouch) moveTouch = null; });
+  // táctil: un dedo mueve, dos dedos hacen zoom
+  let moveTouch = null, pinch = null;
+  const touchDist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  cv.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (e.touches.length >= 2) { pinch = { d: touchDist(e.touches[0], e.touches[1]), z: zoomMul }; return; }
+    for (const t of e.changedTouches) if (moveTouch === null) { moveTouch = t.identifier; mouseX = t.clientX; mouseY = t.clientY; }
+  }, { passive: false });
+  cv.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (pinch && e.touches.length >= 2) { zoomMul = Math.min(2.5, Math.max(0.35, pinch.z * touchDist(e.touches[0], e.touches[1]) / pinch.d)); return; }
+    for (const t of e.changedTouches) if (t.identifier === moveTouch) { mouseX = t.clientX; mouseY = t.clientY; }
+  }, { passive: false });
+  cv.addEventListener('touchend', (e) => {
+    if (e.touches.length < 2) pinch = null;
+    for (const t of e.changedTouches) if (t.identifier === moveTouch) moveTouch = null;
+  });
   function tb(id, down, up) {
     $(id).addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); down(); }, { passive: false });
     if (up) { $(id).addEventListener('touchend', up); $(id).addEventListener('touchcancel', up); }
@@ -314,6 +401,7 @@
   tb('bEject', () => startEject(true, 'touch'), stopEject);
   tb('bMinion', () => send({ t: 'minion' }));
   tb('bChat', () => { $('chatIn').style.display = 'block'; $('chatIn').focus(); });
+  tb('bEmote', toggleEmoteBar);
   $('chatIn').addEventListener('blur', () => { if (isTouch) { const t = $('chatIn').value.trim(); if (t) send({ t: 'chat', msg: t }); $('chatIn').value = ''; $('chatIn').style.display = 'none'; } });
 
   setInterval(() => {
@@ -352,33 +440,39 @@
     fpsN++; fpsT += dt; if (fpsT >= 1000) { fps = fpsN; fpsN = 0; fpsT = 0; }
     const k = 1 - Math.pow(0.6, dt / 16.7);
     cam.x += (target.x - cam.x) * k; cam.y += (target.y - cam.y) * k;
-    cam.z += (Math.max(W, H) / (2200 * target.f) - cam.z) * k * 0.5;
+    cam.z += (Math.max(W, H) / (2200 * target.f) * zoomMul - cam.z) * k * 0.5;
     for (const [id, e] of ents) {
       e.x += (e.tx - e.x) * k; e.y += (e.ty - e.y) * k;
       if (e.dead) { e.deadT += dt; e.r += (0 - e.r) * k; if (e.deadT > 200) ents.delete(id); }
       else e.r += (e.tr - e.r) * k;
     }
 
+    const light = cfg.light;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctx.fillStyle = '#111318'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = light ? '#e9edf2' : '#111318'; ctx.fillRect(0, 0, W, H);
     ctx.save();
     ctx.translate(W / 2, H / 2); ctx.scale(cam.z, cam.z); ctx.translate(-cam.x, -cam.y);
     const vx0 = cam.x - W / 2 / cam.z, vx1 = cam.x + W / 2 / cam.z, vy0 = cam.y - H / 2 / cam.z, vy1 = cam.y + H / 2 / cam.z;
-    ctx.fillStyle = '#181b22'; ctx.fillRect(0, 0, worldW, worldW);
-    ctx.strokeStyle = 'rgba(255,255,255,.05)'; ctx.lineWidth = 1 / cam.z;
-    ctx.beginPath();
-    const g = 60;
-    for (let x = Math.floor(Math.max(0, vx0) / g) * g; x <= Math.min(worldW, vx1); x += g) { ctx.moveTo(x, Math.max(0, vy0)); ctx.lineTo(x, Math.min(worldW, vy1)); }
-    for (let y = Math.floor(Math.max(0, vy0) / g) * g; y <= Math.min(worldW, vy1); y += g) { ctx.moveTo(Math.max(0, vx0), y); ctx.lineTo(Math.min(worldW, vx1), y); }
-    ctx.stroke();
+    ctx.fillStyle = light ? '#f7f9fb' : '#181b22'; ctx.fillRect(0, 0, worldW, worldW);
+    if (cfg.grid) {
+      ctx.strokeStyle = light ? 'rgba(0,0,0,.08)' : 'rgba(255,255,255,.05)'; ctx.lineWidth = 1 / cam.z;
+      ctx.beginPath();
+      const g = 60;
+      for (let x = Math.floor(Math.max(0, vx0) / g) * g; x <= Math.min(worldW, vx1); x += g) { ctx.moveTo(x, Math.max(0, vy0)); ctx.lineTo(x, Math.min(worldW, vy1)); }
+      for (let y = Math.floor(Math.max(0, vy0) / g) * g; y <= Math.min(worldW, vy1); y += g) { ctx.moveTo(Math.max(0, vx0), y); ctx.lineTo(Math.min(worldW, vx1), y); }
+      ctx.stroke();
+    }
     ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 10; ctx.strokeRect(0, 0, worldW, worldW);
 
     for (let i = 0; i < foodArr.length; i += 3) {
+      const fx = foodArr[i], fy = foodArr[i + 1];
+      if (fx < vx0 - 10 || fx > vx1 + 10 || fy < vy0 - 10 || fy > vy1 + 10) continue;
       ctx.fillStyle = colors[foodArr[i + 2]] || '#999';
-      ctx.beginPath(); ctx.arc(foodArr[i], foodArr[i + 1], 9, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(fx, fy, 9, 0, Math.PI * 2); ctx.fill();
     }
 
     const list = [...ents.values()].sort((a, b) => a.r - b.r);
+    const bigByOwner = new Map(); // célula más grande de cada jugador (para emotes)
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
     for (const e of list) {
       if (e.r < 1) continue;
@@ -387,7 +481,8 @@
       ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
       ctx.fillStyle = pi.color; ctx.fill();
       if (e.type === 3) continue;
-      const img = e.r > 15 ? getSkin(pi.skin) : null;
+      if (!e.dead) bigByOwner.set(e.owner, e);
+      const img = cfg.skins && e.r > 15 ? getSkin(pi.skin) : null;
       if (img) {
         ctx.save(); ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2); ctx.clip();
         ctx.drawImage(img, e.x - e.r, e.y - e.r, e.r * 2, e.r * 2); ctx.restore();
@@ -398,18 +493,32 @@
         const fs = Math.max(12, e.r * 0.34);
         ctx.font = '700 ' + fs + 'px system-ui, sans-serif';
         ctx.lineWidth = Math.max(2, fs * 0.13); ctx.strokeStyle = '#000'; ctx.fillStyle = '#fff';
-        if (pi.name) { ctx.strokeText(pi.name, e.x, e.y); ctx.fillText(pi.name, e.x, e.y); }
-        if (e.r > 25) { // masa visible en todas las células
+        if (cfg.names && pi.name) { ctx.strokeText(pi.name, e.x, e.y); ctx.fillText(pi.name, e.x, e.y); }
+        if (cfg.mass && e.r > 25) {
           const ms = Math.floor((e.tr / 10) ** 2);
+          const my = cfg.names && pi.name ? e.y + fs * 0.78 : e.y;
           ctx.font = '700 ' + fs * 0.62 + 'px system-ui, sans-serif';
-          ctx.strokeText(ms, e.x, e.y + fs * 0.78); ctx.fillText(ms, e.x, e.y + fs * 0.78);
+          ctx.strokeText(ms, e.x, my); ctx.fillText(ms, e.x, my);
         }
       }
     }
+    // emotes sobre la célula más grande de cada jugador
+    for (const [id, em] of emotes) {
+      const age = now - em.t;
+      if (age > 2500) { emotes.delete(id); continue; }
+      const c = bigByOwner.get(id);
+      if (!c) continue;
+      const s = Math.max(30, c.r * 0.7) * Math.min(1, age / 150);
+      ctx.globalAlpha = age > 2000 ? (2500 - age) / 500 : 1;
+      ctx.font = s + 'px system-ui, sans-serif';
+      ctx.fillText(em.e, c.x, c.y - c.r - s * 0.6 - Math.min(age, 400) * 0.05);
+      ctx.globalAlpha = 1;
+    }
     ctx.restore();
-    drawMini();
+    if (cfg.minimap) drawMini();
 
-    $('sScore').textContent = 'Masa: ' + score;
+    $('sScore').textContent = spectating ? 'Espectando' : 'Masa: ' + score;
+    $('sRank').textContent = playing && myRank ? 'Puesto #' + myRank : '';
     $('sPerf').textContent = 'FPS ' + fps + ' · Ping ' + ping + 'ms';
     requestAnimationFrame(frame);
   }
@@ -420,7 +529,6 @@
     mctx.clearRect(0, 0, mw, mh);
     mctx.strokeStyle = 'rgba(255,255,255,.12)'; mctx.lineWidth = 1;
     for (let i = 1; i < 5; i++) { const p = (mw / 5) * i; mctx.beginPath(); mctx.moveTo(p, 0); mctx.lineTo(p, mh); mctx.moveTo(0, p); mctx.lineTo(mw, p); mctx.stroke(); }
-    // vista actual
     const vw = W / cam.z * s, vh = H / cam.z * s;
     mctx.strokeStyle = 'rgba(255,255,255,.35)';
     mctx.strokeRect(cam.x * s - vw / 2, cam.y * s - vh / 2, vw, vh);
