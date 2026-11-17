@@ -144,7 +144,7 @@ class Room {
       const half = c.mass / 2;
       c.mass = half;
       const n = this.makeCell(p, c.x + dx * radius(half) * 0.3, c.y + dy * radius(half) * 0.3, half);
-      const boost = 28 + Math.min(radius(half) * 0.04, 14);
+      const boost = 20 + Math.min(radius(half) * 0.03, 10);
       n.vx = dx * boost; n.vy = dy * boost;
       const mt = now + this.mergeDelay(half);
       c.mergeAt = Math.max(c.mergeAt, mt); n.mergeAt = mt;
@@ -162,11 +162,11 @@ class Room {
       if (c.mass < 35) continue;
       let dx = p.tx - c.x, dy = p.ty - c.y;
       const d = Math.hypot(dx, dy) || 1; dx /= d; dy /= d;
-      c.mass -= 16;
+      c.mass -= 10;
       const r = radius(c.mass);
       const ang = Math.atan2(dy, dx) + rand(-0.12, 0.12);
       this.ejected.push({ id: nextId++, x: c.x + Math.cos(ang) * (r + 12), y: c.y + Math.sin(ang) * (r + 12),
-        mass: 12, vx: Math.cos(ang) * 26, vy: Math.sin(ang) * 26, owner: p, born: now });
+        mass: 10, vx: Math.cos(ang) * 26, vy: Math.sin(ang) * 26, owner: p, born: now });
     }
   }
   popOnVirus(cell, virus) {
@@ -262,7 +262,7 @@ class Room {
           c.x += (dx / d) * sp; c.y += (dy / d) * sp;
         }
         c.x += c.vx; c.y += c.vy;
-        c.vx *= 0.87; c.vy *= 0.87;
+        c.vx *= 0.91; c.vy *= 0.91;
         if (Math.abs(c.vx) < 0.05) c.vx = 0;
         if (Math.abs(c.vy) < 0.05) c.vy = 0;
         c.x = clamp(c.x, r * 0.4, W - r * 0.4);
@@ -470,7 +470,7 @@ class Room {
       }
       for (const e of this.ejected) {
         if (e.x < x0 || e.x > x1 || e.y < y0 || e.y > y1) continue;
-        out.push([e.id, Math.round(e.x), Math.round(e.y), Math.round(radius(e.mass)), e.owner.id, 3]);
+        out.push([e.id, Math.round(e.x), Math.round(e.y), Math.round(radius(e.mass) * 0.6), e.owner.id, 3]);
       }
       const msg = { t: 's', x: Math.round(p.viewX), y: Math.round(p.viewY), f: +p.viewF.toFixed(3),
         m: Math.floor(p.alive ? p.totalMass() : 0), c: out };
