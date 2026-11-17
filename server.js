@@ -18,13 +18,13 @@ const MAX_PLAYERS_PER_ROOM = 60;
 
 // Cada modo es una sala independiente con sus propias reglas
 const MODES = {
-  ffa: { label: 'FFA Clásico', worldSize: 7000, startMass: 100, maxCells: 32, mergeMs: 15000, mergeMassMul: 15,
+  ffa: { label: 'FFA Clásico', worldSize: 7000, startMass: 100, startMassMax: 130, maxCells: 16, mergeMs: 15000, mergeMassMul: 15,
     speed: 1.2, viruses: 25, food: 1000, foodMass: 3, bots: 10, decay: 0.00025, minions: 0, splitMin: 36 },
   instant: { label: 'Instant', worldSize: 8000, startMass: 500, maxCells: 32, mergeMs: 700, mergeMassMul: 0,
     speed: 1.35, viruses: 35, food: 1400, foodMass: 2, bots: 14, decay: 0.0004, minions: 0, splitMin: 36 },
   crazy: { label: 'Crazy', worldSize: 9000, startMass: 2500, maxCells: 64, mergeMs: 1500, mergeMassMul: 0,
     speed: 1.6, viruses: 80, food: 1600, foodMass: 4, bots: 14, decay: 0.0005, minions: 0, splitMin: 30 },
-  bots: { label: 'Bots (minions)', worldSize: 7000, startMass: 100, maxCells: 32, mergeMs: 15000, mergeMassMul: 15,
+  bots: { label: 'Bots (minions)', worldSize: 7000, startMass: 100, startMassMax: 130, maxCells: 16, mergeMs: 15000, mergeMassMul: 15,
     speed: 1, viruses: 25, food: 1300, foodMass: 1, bots: 6, decay: 0.00025, minions: 3, splitMin: 36 },
 };
 // MODES=ffa,instant para activar solo algunos; BOTS=n para fijar bots en todas las salas
@@ -81,7 +81,9 @@ class Player {
       : this.room.safeSpawn();
     const W = this.room.W;
     pos.x = clamp(pos.x, 100, W - 100); pos.y = clamp(pos.y, 100, W - 100);
-    const mass = this.master ? Math.max(20, this.room.mode.startMass * 0.5) : this.room.mode.startMass;
+    const M = this.room.mode; // masa inicial al azar entre startMass y startMassMax
+    const m0 = M.startMassMax ? Math.round(rand(M.startMass, M.startMassMax)) : M.startMass;
+    const mass = this.master ? Math.max(20, m0 * 0.5) : m0;
     this.cells = [this.room.makeCell(this, pos.x, pos.y, mass)];
     this.tx = pos.x; this.ty = pos.y;
     this.alive = true;
